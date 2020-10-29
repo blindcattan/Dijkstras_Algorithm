@@ -34,8 +34,13 @@ class dNode:
 
     def hasCollided(self, x,y):
         A = self
+        top = A.y - A.Height
+        bottom = A.y + A.Height
+        left = A.x - A.Height
+        right = A.x + A.Height
 
-        if A.x + A.width > x and A.y + A.Height > y and x + 10 > x and y + 20 > y:
+        #print("Top ", top, " Bottom: ", bottom, " left", left, " right: ", right, "   Mouse x, y",x," ", y)
+        if y > top and y < bottom and x > left and x < right:
             return True
         else:
             return False
@@ -72,50 +77,25 @@ def display():
 
     # Display loop
     while run:
-        pygame.time.delay(50)
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == MOUSEBUTTONDOWN:
                 MouseXY = pygame.mouse.get_pos()
-
+                print(MouseXY)
                 if event.button == 1:
                     create_a_node(MouseXY[0], MouseXY[1])
                 if event.button == 3:
                     print("Drawing: ", drawing)
-                    start_pos = MouseXY
                     for d in list_of_dNodes:
                         #Not clicked on anything yet, But managed to click on something
                         global startPos
-                        if d.hasCollided(start_pos[0], start_pos[1]) and drawing == False:
-                            global startNode
-                            startNode = d
-                            print("collided, now drawing")
-                            drawing = True
-                            startPos = start_pos
-                        # Have already clicked on something, Looking to click on the end point
-                        elif d.hasCollided(start_pos[0], start_pos[1]) and drawing == True:
-                            print("collided stopped drawing")
-                            drawing = False
-                            lines.append((start_pos[0],start_pos[1], d.x, d.y))
+                        if d.hasCollided(MouseXY[0], MouseXY[1]):
+                            tempNode = d
+                            print("Collided", d.displayName)
 
-                            #add route
-                            m.add_route(startNode.mNode,d.mNode,1)
-
-                            startNode = None
-
-                        # these should cancel parts
-                        elif d.hasCollided(start_pos[0], start_pos[1]) == False and drawing == True:
-                            print ("not collided")
-                            drawing == False
-
-                            StartNode = None
-                        elif d.hasCollided(start_pos[0], start_pos[1]) == False and drawing == False:
-                            print("not collided")
-                            drawing == False
-
-                            StartNode = None
 
 
 

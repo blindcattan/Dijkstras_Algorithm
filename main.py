@@ -1,6 +1,5 @@
 import map
 import Display
-
 # list of all nodes
 
 
@@ -79,17 +78,12 @@ map.add_route(k,j,4)
 #for i in test:
 #    print (i.End.ID)
 
-#map.Start_Dijkstras(d,k,list_of_nodes)
+#map.Start_Dijkstras(a,l,list_of_nodes)
 
 Display.display()
+
+
 #print ("test area", e.getNeighbours())
 
 
 #print(map.getRouteWeight(s,c))
-
-words = "A"
-Node_Name = 64
-ascii = []
-char = ord(words[0])-1
-print(chr(char))
-
