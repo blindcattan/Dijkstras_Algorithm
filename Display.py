@@ -17,13 +17,26 @@ Node_Name = 65
 the_Node_selected = ""
 Node_selected =False
 
+#Highway options
+
+# multipliers
+
+
+# text
+
+
 lines = []
+def calcCenter (startX,startY,endX,endY):
+    centerX =  ((startX + endX) / 2)
+    centerY =  ((startY + endY) / 2)
+    return (centerX,centerY)
 
 
 def calcDistance(startX,startY,endX,endY):
     distance = math.sqrt((startX - endX)**2 + (startY - endY)**2)
-    print (distance)
+    #print (distance)
     return distance
+
 class dNode:
     width = 10
     Height = 20
@@ -69,13 +82,15 @@ def display():
     drawing = False
 
     ScreenHeight = 700
-    ScreenWidth = 700
+    ScreenWidth = 900
 
 
 
     pygame.init()
     pygame.font.init()
     myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    Dmyfont = pygame.font.SysFont('Comic Sans MS', 18)
+
     window = pygame.display.set_mode((ScreenWidth, ScreenHeight))
     pygame.display.set_caption("Dijkstras Algorithm")
     run = True
@@ -93,7 +108,16 @@ def display():
                 MouseXY = pygame.mouse.get_pos()
                 print(MouseXY)
                 if event.button == 1:
-                    create_a_node(MouseXY[0], MouseXY[1])
+                    collided = False
+                    for d in list_of_dNodes:
+                        #Not clicked on anything yet, But managed to click on something
+                        global startPos
+                        if d.hasCollided(MouseXY[0], MouseXY[1]):
+                            collided = True
+                            print("Collided", d.displayName)
+                    if collided is False:
+                        create_a_node(MouseXY[0], MouseXY[1])
+                    collided = False
                 if event.button == 3:
 
                     tempNode = None
@@ -118,10 +142,11 @@ def display():
                             drawing = True
                             startPos = pygame.mouse.get_pos()
                         else:
-                            lines.append((lineStart,tempNode))
+
                             distance = calcDistance(lineStart.x,lineStart.y,tempNode.x,tempNode.y)
+                            lines.append((lineStart, tempNode,distance))
                             m.add_route(lineStart.mNode,tempNode.mNode,distance)
-                            m.add_route(tempNode.mNode, lineStart.mNode, 2)
+                            m.add_route(tempNode.mNode, lineStart.mNode, distance)
                             drawing = False
                             lineStart = None
             if event.type == KEYDOWN:
@@ -165,14 +190,19 @@ def display():
         # draw lines
 
         for l in lines:
-
+            #print ("hi", l)
             startX = l[0].x
             startY = l[0].y
 
             endX = l[1].x
             endY= l[1].y
 
+            theDistance = l[2]
+
             pygame.draw.line(window, (0, 0, 255),(startX, startY),(endX, endY),3 )
+            textsurface = Dmyfont.render(str(theDistance), False, (255, 255, 255))
+            midCoords=  calcCenter(startX,startY,endX,endY)
+            window.blit(textsurface, midCoords)
 
         if drawing == True:
             MouseXY = pygame.mouse.get_pos()
