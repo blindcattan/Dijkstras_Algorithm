@@ -1,6 +1,7 @@
 import pygame
 import sys
 import map as m
+import math
 from pygame.locals import *
 
 list_of_mNodes = []
@@ -18,9 +19,11 @@ Node_selected =False
 
 lines = []
 
-#char = ord(words[0])-1
-#print(chr(char))
 
+def calcDistance(startX,startY,endX,endY):
+    distance = math.sqrt((startX - endX)**2 + (startY - endY)**2)
+    print (distance)
+    return distance
 class dNode:
     width = 10
     Height = 20
@@ -68,13 +71,17 @@ def display():
     ScreenHeight = 700
     ScreenWidth = 700
 
+
+
     pygame.init()
     pygame.font.init()
     myfont = pygame.font.SysFont('Comic Sans MS', 30)
     window = pygame.display.set_mode((ScreenWidth, ScreenHeight))
-    pygame.display.set_caption("Second Game")
+    pygame.display.set_caption("Dijkstras Algorithm")
     run = True
 
+    lineStart = None
+    drawing = False
     # Display loop
     while run:
 
@@ -88,7 +95,9 @@ def display():
                 if event.button == 1:
                     create_a_node(MouseXY[0], MouseXY[1])
                 if event.button == 3:
-                    print("Drawing: ", drawing)
+
+                    tempNode = None
+
                     for d in list_of_dNodes:
                         #Not clicked on anything yet, But managed to click on something
                         global startPos
@@ -96,10 +105,51 @@ def display():
                             tempNode = d
                             print("Collided", d.displayName)
 
+                    # Not collided
+
+                    if tempNode == None:
+                        if lineStart != None: # cancel
+                            lineStart = None
+                            drawing = False
+                    else: # fun stuff
+                        if lineStart == None: # Start line
+                            lineStart = tempNode
+                            print("started at , ", tempNode )
+                            drawing = True
+                            startPos = pygame.mouse.get_pos()
+                        else:
+                            lines.append((lineStart,tempNode))
+                            distance = calcDistance(lineStart.x,lineStart.y,tempNode.x,tempNode.y)
+                            m.add_route(lineStart.mNode,tempNode.mNode,distance)
+                            m.add_route(tempNode.mNode, lineStart.mNode, 2)
+                            drawing = False
+                            lineStart = None
+            if event.type == KEYDOWN:
+                MouseXY = pygame.mouse.get_pos()
+                keys = pygame.key.get_pressed()
+                if keys[K_s]:
+                    for d in list_of_dNodes:
+                        #Not clicked on anything yet, But managed to click on something
+                        if d.hasCollided(MouseXY[0], MouseXY[1]):
+                            tempNode = d
+                            print("Collided", d.displayName)
+                    beginningnode = tempNode
+                if keys[K_e]:
+                    for d in list_of_dNodes:
+                        # Not clicked on anything yet, But managed to click on something
+                        if d.hasCollided(MouseXY[0], MouseXY[1]):
+                            tempNode = d
+                            print("Collided", d.displayName)
+                    finishNode = tempNode
+                    print("ended")
+                                        # End
+                if keys[K_RETURN]:
+                    # go
+                    print (beginningnode.mNode, " : ",  finishNode.mNode)
+                    m.Start_Dijkstras(beginningnode.mNode, finishNode.mNode, list_of_mNodes)
+                    print("Go find a route")
 
 
-
-        keys = pygame.key.get_pressed()
 
         window.fill((0, 0, 0))
 
@@ -116,11 +166,11 @@ def display():
 
         for l in lines:
 
-            startX = l[0]
-            startY = l[1]
+            startX = l[0].x
+            startY = l[0].y
 
-            endX = l[2]
-            endY= l[3]
+            endX = l[1].x
+            endY= l[1].y
 
             pygame.draw.line(window, (0, 0, 255),(startX, startY),(endX, endY),3 )
 
