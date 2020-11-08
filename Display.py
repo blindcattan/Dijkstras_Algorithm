@@ -84,6 +84,8 @@ def display():
     ScreenHeight = 700
     ScreenWidth = 900
 
+    beginningnode = None
+    finishNode = None
 
 
     pygame.init()
@@ -170,9 +172,12 @@ def display():
                                         # End
                 if keys[K_RETURN]:
                     # go
-                    print (beginningnode.mNode, " : ",  finishNode.mNode)
-                    m.Start_Dijkstras(beginningnode.mNode, finishNode.mNode, list_of_mNodes)
-                    print("Go find a route")
+
+                    if beginningnode == None or finishNode == None:
+                        print("please select a start and a finish")
+                    else:
+                        m.Start_Dijkstras(beginningnode.mNode, finishNode.mNode, list_of_mNodes)
+
 
 
 
