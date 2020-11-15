@@ -1,3 +1,4 @@
+#15th November added functionality to start_diki.. to return variable either an array or a error message
 import operator
 
 def getRouteWeight(start,End):
@@ -8,6 +9,8 @@ def add_route(start, End, Weight):
     theroute = route(End, Weight)
     start.Neighbours.append(theroute)
     print ("route Added")
+
+
 class node():
     def __init__(self,ID):
         self.ID = ID
@@ -169,8 +172,6 @@ def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
         theroute.reverse()
         #print (theroute)
         #Traverse the root so that its Human readable
-
-
         for x in range(len(theroute)):
             if x  > 0:
                 current_Node = theroute[x].theCardNode
@@ -183,7 +184,9 @@ def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
                 distanceToNext = 0
 
             print ("Make your way to " ,current_Node.getID(),  "it will take you ", distanceToNext)
+        return theroute
     else:
-        print ("we didnt get there")
+        print ("we didn't get there")
+        return "ERROR"
 
 

@@ -1,7 +1,8 @@
 #modified 8th November added new features set to change colour of dNode
 #finished modifications 15th november to clear bugs in last feature set. also fix issues from starting the program erroneously. still have a bug where code says that the route has not completed even though it has
+#added funtionaity to follow a route visually
 import pygame
-import sys
+
 import map as m
 import math
 from pygame.locals import *
@@ -27,7 +28,25 @@ Node_selected =False
 # text
 
 
+
 lines = []
+routeLines = []
+
+
+def displayRoute(theroute):
+
+    for x in range(len(theroute)):
+        if x < len(theroute) -1:
+            current_Node = theroute[x].theCardNode
+            nextNode = theroute[x + 1].theCardNode
+            # print("The Current Node is ", current_Node.getID(), " The Next Node is ", prev_Node.getID())
+        else:
+            # first node
+            current_Node = theroute[x].theCardNode
+
+
+        routeLines.append((current_Node,nextNode))
+
 def calcCenter (startX,startY,endX,endY):
     centerX =  ((startX + endX) / 2)
     centerY =  ((startY + endY) / 2)
@@ -190,12 +209,20 @@ def display():
                                         # End
                 if keys[K_RETURN]:
                     # go
-
+                    routeLines.clear()
                     if beginningnode == None or finishNode == None:
                         print("please select a start and a finish")
                     else:
                         print("Start: ", beginningnode.mNode, "end Node: ",finishNode.mNode  )
-                        m.Start_Dijkstras(beginningnode.mNode, finishNode.mNode, list_of_mNodes)
+                        theRoute = m.Start_Dijkstras(beginningnode.mNode, finishNode.mNode, list_of_mNodes)
+
+                        #added functionailty show the route if one is found
+                        if theRoute == "ERROR":
+                            print("Error Found")
+                        else:
+                            displayRoute(theRoute)
+
+
 
         window.fill((0, 0, 0))
 
@@ -224,6 +251,24 @@ def display():
             textsurface = Dmyfont.render(str(theDistance), False, (255, 255, 255))
             midCoords=  calcCenter(startX,startY,endX,endY)
             window.blit(textsurface, midCoords)
+
+        for l in routeLines:
+            print ("hi", l)
+
+            #find the Start node for
+            for d in list_of_dNodes:
+                if d.mNode == l[0]:
+
+                    startX = d.x
+                    startY = d.y
+
+            for d in list_of_dNodes:
+                if d.mNode == l[1]:
+
+                    endX = d.x
+                    endY = d.y
+
+            pygame.draw.line(window, (0, 255, 0),(startX, startY),(endX, endY),6 )
 
         if drawing == True:
             MouseXY = pygame.mouse.get_pos()
