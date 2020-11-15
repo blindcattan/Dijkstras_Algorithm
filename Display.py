@@ -1,3 +1,5 @@
+#modified 8th November added new features set to change colour of dNode
+#finished modifications 15th november to clear bugs in last feature set. also fix issues from starting the program erroneously. still have a bug where code says that the route has not completed even though it has
 import pygame
 import sys
 import map as m
@@ -40,14 +42,14 @@ def calcDistance(startX,startY,endX,endY):
 class dNode:
     width = 10
     Height = 20
-    colour = (255,0,0)
+    #  colour = (255,0,0)  colour can now change
 
     def __init__(self,x,y,mNode,displayName):
         self.x = x
         self.y = y
         self.mNode = mNode
         self.displayName = displayName
-
+        self.colour = (128,128,128) # set the default colour is grey
     def hasCollided(self, x,y):
         A = self
         top = A.y - A.Height
@@ -60,6 +62,21 @@ class dNode:
             return True
         else:
             return False
+
+    def setBlue(self):
+        self.colour = (0,128,255)
+
+    def setGreen(self):
+        self.colour = (128,255,0) # I know its not super green but I like this colour better
+
+    def setRed(self):
+        self.colour = (204,0,0)
+
+    def setYellow(self):
+        self.colour = (255,255,51)
+
+    def setMagenta(self):
+        self.colour = (255,0,127)
 
 
 def create_a_node(x,y):
@@ -77,6 +94,9 @@ CursorX = 0
 CursorY = 0
 
 list_of_Nodes = []
+
+#beginningnode = None
+#finishNode = None
 
 def display():
     drawing = False
@@ -121,18 +141,14 @@ def display():
                         create_a_node(MouseXY[0], MouseXY[1])
                     collided = False
                 if event.button == 3:
-
                     tempNode = None
-
                     for d in list_of_dNodes:
                         #Not clicked on anything yet, But managed to click on something
                         global startPos
                         if d.hasCollided(MouseXY[0], MouseXY[1]):
                             tempNode = d
                             print("Collided", d.displayName)
-
                     # Not collided
-
                     if tempNode == None:
                         if lineStart != None: # cancel
                             lineStart = None
@@ -144,11 +160,13 @@ def display():
                             drawing = True
                             startPos = pygame.mouse.get_pos()
                         else:
-
                             distance = calcDistance(lineStart.x,lineStart.y,tempNode.x,tempNode.y)
                             lines.append((lineStart, tempNode,distance))
                             m.add_route(lineStart.mNode,tempNode.mNode,distance)
                             m.add_route(tempNode.mNode, lineStart.mNode, distance)
+                            #sett the correct colour of the two points to dente that they are linked
+                            lineStart.setMagenta()
+                            tempNode.setMagenta()
                             drawing = False
                             lineStart = None
             if event.type == KEYDOWN:
@@ -158,17 +176,17 @@ def display():
                     for d in list_of_dNodes:
                         #Not clicked on anything yet, But managed to click on something
                         if d.hasCollided(MouseXY[0], MouseXY[1]):
-                            tempNode = d
-                            print("Collided", d.displayName)
-                    beginningnode = tempNode
+                            d.setBlue()
+                            beginningnode = d
                 if keys[K_e]:
                     for d in list_of_dNodes:
                         # Not clicked on anything yet, But managed to click on something
                         if d.hasCollided(MouseXY[0], MouseXY[1]):
                             tempNode = d
-                            print("Collided", d.displayName)
+                            print("End: ", d.displayName)
+                            tempNode.setRed()
                     finishNode = tempNode
-                    print("ended")
+
                                         # End
                 if keys[K_RETURN]:
                     # go
@@ -176,10 +194,8 @@ def display():
                     if beginningnode == None or finishNode == None:
                         print("please select a start and a finish")
                     else:
+                        print("Start: ", beginningnode.mNode, "end Node: ",finishNode.mNode  )
                         m.Start_Dijkstras(beginningnode.mNode, finishNode.mNode, list_of_mNodes)
-
-
-
 
         window.fill((0, 0, 0))
 

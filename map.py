@@ -7,7 +7,7 @@ def getRouteWeight(start,End):
 def add_route(start, End, Weight):
     theroute = route(End, Weight)
     start.Neighbours.append(theroute)
-
+    print ("route Added")
 class node():
     def __init__(self,ID):
         self.ID = ID
@@ -77,6 +77,7 @@ class card:
         return self.theCardNode.getID()
 
 def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
+    print (startNode, End_Node, list_of_Nodes)
     thestartnode = startNode
     EndNode = End_Node
     emptyNode = node("Blank")
@@ -94,7 +95,6 @@ def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
     #   print(aCard.theCardNode.ID)
 
     # find the card that repersents the start in the array
-
     for theCard in activeCards:
         if startNode == theCard.theCardNode:
             starCard = theCard
@@ -104,18 +104,22 @@ def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
     starCard.setWeight(0)
     #okay were ready to start
     Cardgotfound = False
-
+    #print("the active Card =", theActiveCard.theCardNode.getID() )
+    #print("the End Node = ",EndNode.getID())
     while theActiveCard.theCardNode.getID() != EndNode.getID():
         #print ("The active card is ", theActiveCard.theCardNode.getID(), "and the ENd Node is ", EndNode.getID())
         # get the list of _Neighbours
         list_of_Neighbours = theActiveCard.theCardNode.getNeighbours()
 
+
         for n in list_of_Neighbours:
             aNode = n.getEnd()
+
             #if any of the Neighbours is the end Node
             #print ("active Card is ", theActiveCard.theCardNode.getID(), "its Current Weight is ", theActiveCard.getWeight(), " Neighbour is ", aNode.getID(), " End Node is ", EndNode.getID())
             if aNode == EndNode:
                 Cardgotfound = True
+                print("card found")
 
             # find card that matches that aNode
             for  i in range(len(activeCards)):
@@ -130,7 +134,6 @@ def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
                     if activeCardWeight + routeWeight < neightCardWeight:
                         activeCards[i].setWeight(activeCardWeight + routeWeight)
                         activeCards[i].via = theActiveCard
-
 
 
         #put card in completed pile
@@ -156,7 +159,7 @@ def Start_Dijkstras(startNode, End_Node, list_of_Nodes):
 
         # This is how we got here
         theroute = []
-        print(TheLastWayPoint.theCardNode)
+
         while  TheLastWayPoint.theCardNode.getID() != starCard.theCardNode.getID():
             theroute.append(TheLastWayPoint)
             TheLastWayPoint = TheLastWayPoint.via
