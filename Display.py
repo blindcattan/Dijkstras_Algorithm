@@ -11,6 +11,7 @@ list_of_mNodes = []
 list_of_dNodes = []
 
 
+
 #Line States
 
 startPos = (0,0)
@@ -114,18 +115,59 @@ CursorY = 0
 
 list_of_Nodes = []
 
+ScreenHeight = 500
+ScreenWidth = 900
+
+hOption1 = (ScreenWidth - 20, ScreenHeight - 120)
+hOPtColour1 = (255, 255, 255)
+hOption2 = (ScreenWidth - 20, ScreenHeight - 80)
+hOPtColour2 = (0, 0, 255)
+hOption3 = (ScreenWidth - 20, ScreenHeight - 40)
+hOPtColour3 = (255, 255, 255)
+multiplier = 1
+
 #beginningnode = None
 #finishNode = None
 
+def caughtOptionOne(x,y):
+    #quite possibly the second worst way of doing this but hey its late you gonna do its late
+    top = hOption1[1] - 16
+    bottom = hOption1[1] + 16
+    left = hOption1[0] - 16
+    right = hOption1[0] + 16
+    # print("Top ", top, " Bottom: ", bottom, " left", left, " right: ", right, "   Mouse x, y",x," ", y)
+    if y > top and y < bottom and x > left and x < right:
+        return True
+    else:
+        return False
+def caughtOptionTwo(x,y):
+    #quite possibly the second worst way of doing this but hey its late you gonna do its late
+    top = hOption2[1] - 16
+    bottom = hOption2[1] + 16
+    left = hOption2[0] - 16
+    right = hOption2[0] + 16
+    # print("Top ", top, " Bottom: ", bottom, " left", left, " right: ", right, "   Mouse x, y",x," ", y)
+    if y > top and y < bottom and x > left and x < right:
+        return True
+    else:
+        return False
+def caughtOptionThree(x,y):
+    #quite possibly the second worst way of doing this but hey its late you gonna do its late
+    top = hOption3[1] - 16
+    bottom = hOption3[1] + 16
+    left = hOption3[0] - 16
+    right = hOption3[0] + 16
+    # print("Top ", top, " Bottom: ", bottom, " left", left, " right: ", right, "   Mouse x, y",x," ", y)
+    if y > top and y < bottom and x > left and x < right:
+        return True
+    else:
+        return False
+
+
 def display():
     drawing = False
-
-    ScreenHeight = 700
-    ScreenWidth = 900
-
     beginningnode = None
     finishNode = None
-
 
     pygame.init()
     pygame.font.init()
@@ -139,6 +181,15 @@ def display():
     lineStart = None
     drawing = False
     # Display loop
+
+    #globals
+    global hOPtColour1
+    global hOPtColour2
+    global hOPtColour3
+    global hOption1
+    global hOption2
+    global hOption3
+    global multiplier
     while run:
 
 
@@ -149,16 +200,35 @@ def display():
                 MouseXY = pygame.mouse.get_pos()
                 print(MouseXY)
                 if event.button == 1:
-                    collided = False
-                    for d in list_of_dNodes:
-                        #Not clicked on anything yet, But managed to click on something
-                        global startPos
-                        if d.hasCollided(MouseXY[0], MouseXY[1]):
-                            collided = True
-                            print("Collided", d.displayName)
-                    if collided is False:
-                        create_a_node(MouseXY[0], MouseXY[1])
-                    collided = False
+                    if caughtOptionOne(MouseXY[0], MouseXY[1]):
+                        print ("heyo1")
+                        hOPtColour1 = (0,0,255)
+                        hOPtColour2 = (255, 255, 255)
+                        hOPtColour3 = (255, 255, 255)
+                        multiplier = 2
+                    elif caughtOptionTwo(MouseXY[0], MouseXY[1]):
+                        print("heyo2")
+                        hOPtColour1 = (255,255,255)
+                        hOPtColour2 = (0, 0, 255)
+                        hOPtColour3 = (255, 255, 255)
+                        multiplier = 1
+                    elif caughtOptionThree(MouseXY[0],MouseXY[1]):
+                        print("heyo3")
+                        hOPtColour3 = (0, 0, 255)
+                        hOPtColour2 = (255, 255, 255)
+                        hOPtColour1 = (255, 255, 255)
+                        multiplier = 0.5
+                    else:
+                        collided = False
+                        for d in list_of_dNodes:
+                            #Not clicked on anything yet, But managed to click on something
+                            global startPos
+                            if d.hasCollided(MouseXY[0], MouseXY[1]):
+                                collided = True
+                                print("Collided", d.displayName)
+                        if collided is False:
+                            create_a_node(MouseXY[0], MouseXY[1])
+                        collided = False
                 if event.button == 3:
                     tempNode = None
                     for d in list_of_dNodes:
@@ -180,9 +250,9 @@ def display():
                             startPos = pygame.mouse.get_pos()
                         else:
                             distance = calcDistance(lineStart.x,lineStart.y,tempNode.x,tempNode.y)
-                            lines.append((lineStart, tempNode,distance))
-                            m.add_route(lineStart.mNode,tempNode.mNode,distance)
-                            m.add_route(tempNode.mNode, lineStart.mNode, distance)
+                            lines.append((lineStart, tempNode,distance * multiplier))
+                            m.add_route(lineStart.mNode,tempNode.mNode,distance * multiplier)
+                            m.add_route(tempNode.mNode, lineStart.mNode, distance * multiplier)
                             #sett the correct colour of the two points to dente that they are linked
                             lineStart.setMagenta()
                             tempNode.setMagenta()
@@ -235,6 +305,11 @@ def display():
             #pygame.draw.circle(window, s.colour, (s.x, s.y, s.width, s.Height))
             #print (len(list_of_mNodes))
 
+        #draw GUI
+        pygame.draw.circle(window, hOPtColour1, hOption1,15,20)
+        pygame.draw.circle(window, hOPtColour2, hOption2,15,20)
+        pygame.draw.circle(window, hOPtColour3, hOption3,15,20)
+
         # draw lines
 
         for l in lines:
@@ -253,7 +328,7 @@ def display():
             window.blit(textsurface, midCoords)
 
         for l in routeLines:
-            print ("hi", l)
+
 
             #find the Start node for
             for d in list_of_dNodes:
