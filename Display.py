@@ -1,7 +1,8 @@
 #modified 8th November added new features set to change colour of dNode
 #finished modifications 15th november to clear bugs in last feature set. also fix issues from starting the program erroneously. still have a bug where code says that the route has not completed even though it has
 #added funtionaity to follow a route visually
-#added  Functionality for a speed options 
+#added functionality for different routes 22Nov
+#added  Functionality for a speed options dated 22Nov
 import pygame
 
 import map as m
